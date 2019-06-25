@@ -23,9 +23,18 @@ export class ModuleTokenFactory {
   public getDynamicMetadataToken(
     dynamicModuleMetadata: Partial<DynamicModule> | undefined,
   ): string {
+    function replacer(key: string, value: any) {
+      if (typeof value === 'function') {
+        return value.name;
+      } else {
+        return value;
+      }
+    }
     // Uses safeStringify instead of JSON.stringify
     // to support circular dynamic modules
-    return dynamicModuleMetadata ? stringify(dynamicModuleMetadata) : '';
+    return dynamicModuleMetadata
+      ? stringify(dynamicModuleMetadata, replacer)
+      : '';
   }
 
   public getModuleName(metatype: Type<any>): string {
